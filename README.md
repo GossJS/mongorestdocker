@@ -1,6 +1,4 @@
-
-
-Задания для самостоятельного исследования
+Итак, были задания для самостоятельного исследования
 
 1. Исследуйте сопоставление томов (volumes), так чтобы после работы контейнера mongodb данные, собранные через веб-интерфейс, были доступны в папке извне контейнера для дальнейшего повторного использования
 
@@ -8,68 +6,53 @@
 
 Соответственно для пользователя запрос к API будет выглядеть более кратким:
 
-http://78.155.206.184/getalldocuments
-
-|
-v
-
-http://78.155.206.184:3000/api/templates?apiKey=ifna212ASFisfsjaAFFF
 
 
+1. Создаём скейлет с приложением-докером и подключаемся через .ssh
 
-
-
-
-Пожалуйста, отправьте POST-запрос с телом
-
-{ 
-   "name": "JSX",
-   "type": "declarative"
-}
-
-на адрес
-
-http://78.155.206.184:3000/api/templates?apiKey=ifna212ASFisfsjaAFFF
-
-
-curl -SLO 'https://raw.githubusercontent.com/GossJS/mongorestdocker/master/docker-compose.yml'
-
-
-
-# Description
-Node.js and Express.js REST API with MongoDB services Docker compose file. You can use this for launching a REST api on your server very quickly. 
-It will create a MongoDB database with admin and database users and a REST service that will allow you to get and send data from Mongo. It will expose 2 ports, one for connecting directly to Mongo and one for the API. 
-The configuration is done through Environment variables which you can add in a `.env` file in this folder since it's already present in .gitignore so it won't be committed if you push this code to your fork. 
-You can view a step-by-step tutorial with how this file was created on my [Blog](http://blog.bejanalex.com/2017/03/mongodb-rest-api-interface-in-docker/)
-
-# Requirements
-
-[Docker](https://www.docker.com/community-edition#/download) and [Docker compose](https://docs.docker.com/compose/overview/) are required to run these services.
-
-# Running the services
-
-### Environment variables
-
-Either export each environment variable in the terminal session or add an `.env` file in this folder after cloning it. The following environment variables are available:
-
-- MONGODB_EXPOSED_PORT (the MongoDB port you will expose to the outside world)
-- MONGODB_ADMIN_USER (MongoDB admin user)
-- MONGODB_ADMIN_PASS (MongoDB admin password)
-- MONGODB_APPLICATION_DATABASE (MongoDB database for the REST Api Node.js application)
-- MONGODB_APPLICATION_USER (MongoDB REST Api database user)
-- MONGODB_APPLICATION_PASS (MongoDB REST Api database password)
-- REST_API_EXPOSED_PORT (REST Api port)
-- REST_API_APIKEY (REST Api Key that you will need to include as a URL parameter when making HTTP requests)
-
-Here is an example of my `.env` file I used for the Blog example. 
+(если есть домен, то оперативно изменяем его DNS-зону с учётом полученного IP)
 
 ```
-MONGODB_EXPOSED_PORT=27017
-MONGODB_ADMIN_USER=admin
-MONGODB_ADMIN_PASS=adminP4ss
-MONGODB_APPLICATION_DATABASE=appdb
-MONGODB_APPLICATION_USER=appuser
-MONGODB_APPLICATION_PASS=appP4ss
-REST_API_EXPOSED_PORT=3000
-REST_API_APIKEY=ifna212ASFisfsjaAFFF
-```
+Если нужно сгенерировать ключи
+
+ssh-keygen -t rsa 
+
+в конец публичного ключа добавляется имя_юзера@имя_компа
+
+например vscale1@air
+
+micro id_rsa.pub -  в настройках скейлета нужно найти SSH-ключи и добавить новый или при создании скейлета 
+``` 
+
+2. Выполняем
+
+git clone -b mongorestvolume 'https://github.com/GossJS/mongorestdocker.git' /sites
+
+3. Переходим в /sites/data и распаковываем templates_12112017.zip
+
+4. Переходим в /sites и делаем docker-compose up
+
+Теперь по корневому маршруту у нас будут доступны файлы из папки /sites/data для скачивания
+
+А по адресу http://95.213.199.198/alldocuments/templates?apiKey=ifna212ASFisfsjaAFFF
+
+будет доступно то, что известно как http://95.213.199.198:3000/api/templates?apiKey=ifna212ASFisfsjaAFFF
+
+И можно отправлять API-запросы используя этот адрес.
+
+Затем можно зазиповать получившееся содержимое папки  /data и использовать уже этот архив на следующей итерации. Или сделать экспорт.
+
+---
+Доступ через имя домена требует изменения файла конфигурации default.conf (допустим домен у нас ikoder.xyz)
+
+      listen 1234 ikoder.xyz "";
+      listen [::]:1234 ikoder.xyz "";
+      
+Если этого не сделать, получим 502 - Bad Gateway - потому что то, что написано справа от listen с номером порта - это то, что сопоставляется с полем Host - по этому признаку сервер определяет, какую из конфигураций server использовать. Пустота в кавычках говорит серверу, что нужно использовать ту же самую конфигурацию при обращении просто по IP.
+
+
+Следующая задача - обеспечить доступ по SSL/TLS
+
+
+
+
