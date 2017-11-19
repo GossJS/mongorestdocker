@@ -1,6 +1,11 @@
 version: '2'
 
 services:
+  logger:
+    container_name: logger
+    image: igossoudarev/myexpresslogger1
+    ports:
+      - 4321:4321
 
   mongodb:
     container_name: mongodb_container
@@ -16,8 +21,8 @@ services:
       MONGODB_APPLICATION_USER: $MONGODB_APPLICATION_USER
       MONGODB_APPLICATION_PASS: $MONGODB_APPLICATION_PASS
 
-  restapi:
-    container_name: restapi_container
+  api:
+    container_name: api
     image: linuxenko/mongo-rest
     ports:
       - "${REST_API_EXPOSED_PORT}:3000"
@@ -34,3 +39,6 @@ services:
       - /sites/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "80:1234"
+    links:
+      - logger:logger
+      - api:api
