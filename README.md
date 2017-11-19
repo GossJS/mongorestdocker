@@ -10,7 +10,7 @@
 
 1. Создаём скейлет с приложением-докером и подключаемся через .ssh
 
-(если есть домен, например, ikoder.xyz, то оперативно изменяем его DNS-зону с учётом полученного IP, например 82.202.236.127)
+(если есть домен, например, ikoder.xyz, то оперативно изменяем его DNS-зону с учётом полученного IP, например 92.53.66.163)
 
 ```
 Если нужно сгенерировать ключи
@@ -40,22 +40,22 @@ git clone -b mongorestvolume 'https://github.com/GossJS/mongorestdocker.git' /si
 
 Очень важно, что в файле docker-compose.yml мы связываем самый последний контейнер с предыдущими - это гарантирует, что они загрузятся раньше. Контейнер logger нужен только для отладки - чтобы увидеть, как он видит приходящие к нему запросы.
 
-http://82.202.236.127/hello/my
+http://92.53.66.163/hello/my
 
 даст logger /myapi/
 
-http://82.202.236.127/hello/my/api/?param=cute
+http://92.53.66.163/hello/my/api/?param=cute
 
 даст
 
 logger /myapi//api/?param=cute
 
 
-http://82.202.236.127/alldocs/templates?apiKey=ifna212ASFisfsjaAFFF
+http://92.53.66.163/alldocs/templates?apiKey=ifna212ASFisfsjaAFFF
 
 даст 
 
-http://82.202.236.127:3000/api/templates?apiKey=ifna212ASFisfsjaAFFF
+http://92.53.66.163:3000/api/templates?apiKey=ifna212ASFisfsjaAFFF
 
 и таким образом список документов из БД
 
