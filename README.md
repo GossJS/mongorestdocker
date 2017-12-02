@@ -75,7 +75,7 @@ http://ikoder.xyz/alldocs/templates?apiKey=ifna212ASFisfsjaAFFF
 
 
 
-В файле default.conf используются имена, которые docker помещает в файл hosts - это имена контейнеров. Без них пришлось бы использовать захардкоденные адреса (ikodder.xyz вместо logger и api).  
+**В файле default.conf используются имена, которые docker помещает в файл hosts - это имена контейнеров**. Без них пришлось бы использовать захардкоденные адреса (ikodder.xyz вместо logger и api).  
  
 
 Следующая задача - обеспечить доступ по SSL/TLS
@@ -104,3 +104,22 @@ https://github.com/jwilder/nginx-proxy
 https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
 
 
+
+Первый решает такую задачу: не светя внутренних портов, привязать обращение к домену к обращению к внутреннему серверу. Например, чтобы контейнер logger сделался доступным по порту 80 без всякого сопоставления 80:4321 мы можем сделать следующее:
+
+```
+version: '2'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  logger:
+    image: igossoudarev/myexpresslogger1
+    environment:
+      - VIRTUAL_HOST=ikoder.xyz
+```
