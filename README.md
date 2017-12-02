@@ -1,75 +1,8 @@
+Решение окончательной задачи (поставленной в ветке mongorestvolume) - пристегнуть домен по безопасному протоколу к той конфигурации, которая уже есть в указанной ветке этого репозитория.
 
+Ответ - в файле docker-compose.yml этой ветки.
 
-Задания для самостоятельного исследования
+Нам нужно пометить метаинформацией о доменном имени тот контейнер, который прокси будет рассматривать как фронтальный для этого домена. В нашем случае это nginx, который сам работает как реверс-прокси к двум другим.
 
-1. Исследуйте сопоставление томов (volumes), так чтобы после работы контейнера mongodb данные, собранные через веб-интерфейс, были доступны в папке извне контейнера для дальнейшего повторного использования
+Итак, прокси-контейнер делает прокси для нашего реверс-проксера, а компаньон вырабывает для всего этого сертификаты :-)
 
-2. Дополните конфигурацию docker-compose контейнером nginx так, чтобы nginx служил прокси запросов с порта 80 на тот, на котором работает наше API (например 3000)
-
-Соответственно для пользователя запрос к API будет выглядеть более кратким:
-
-http://78.155.206.184/getalldocuments
-
-|
-v
-
-http://78.155.206.184:3000/api/templates?apiKey=ifna212ASFisfsjaAFFF
-
-
-
-
-
-
-Пожалуйста, отправьте POST-запрос с телом
-
-{ 
-   "name": "JSX",
-   "type": "declarative"
-}
-
-на адрес
-
-http://78.155.206.184:3000/api/templates?apiKey=ifna212ASFisfsjaAFFF
-
-
-curl -SLO 'https://raw.githubusercontent.com/GossJS/mongorestdocker/master/docker-compose.yml'
-
-
-
-# Description
-Node.js and Express.js REST API with MongoDB services Docker compose file. You can use this for launching a REST api on your server very quickly. 
-It will create a MongoDB database with admin and database users and a REST service that will allow you to get and send data from Mongo. It will expose 2 ports, one for connecting directly to Mongo and one for the API. 
-The configuration is done through Environment variables which you can add in a `.env` file in this folder since it's already present in .gitignore so it won't be committed if you push this code to your fork. 
-You can view a step-by-step tutorial with how this file was created on my [Blog](http://blog.bejanalex.com/2017/03/mongodb-rest-api-interface-in-docker/)
-
-# Requirements
-
-[Docker](https://www.docker.com/community-edition#/download) and [Docker compose](https://docs.docker.com/compose/overview/) are required to run these services.
-
-# Running the services
-
-### Environment variables
-
-Either export each environment variable in the terminal session or add an `.env` file in this folder after cloning it. The following environment variables are available:
-
-- MONGODB_EXPOSED_PORT (the MongoDB port you will expose to the outside world)
-- MONGODB_ADMIN_USER (MongoDB admin user)
-- MONGODB_ADMIN_PASS (MongoDB admin password)
-- MONGODB_APPLICATION_DATABASE (MongoDB database for the REST Api Node.js application)
-- MONGODB_APPLICATION_USER (MongoDB REST Api database user)
-- MONGODB_APPLICATION_PASS (MongoDB REST Api database password)
-- REST_API_EXPOSED_PORT (REST Api port)
-- REST_API_APIKEY (REST Api Key that you will need to include as a URL parameter when making HTTP requests)
-
-Here is an example of my `.env` file I used for the Blog example. 
-
-```
-MONGODB_EXPOSED_PORT=27017
-MONGODB_ADMIN_USER=admin
-MONGODB_ADMIN_PASS=adminP4ss
-MONGODB_APPLICATION_DATABASE=appdb
-MONGODB_APPLICATION_USER=appuser
-MONGODB_APPLICATION_PASS=appP4ss
-REST_API_EXPOSED_PORT=3000
-REST_API_APIKEY=ifna212ASFisfsjaAFFF
-```
