@@ -123,3 +123,48 @@ services:
     environment:
       - VIRTUAL_HOST=ikoder.xyz
 ```
+
+Каким образом работают такие решения? Как работает второй контейнер? Он рассматривает остальные контейнеры как микросервисы и является для них открывашкой - просматривает метаинформацию, записанную в *environment* и строит файлы настроек по ним.
+
+В качестве промежуточного примеры рассмотрим запуск Ворпресса с чистого листа (с установки):
+
+```
+version: '2'
+
+services:
+
+  wordpress:
+    image: wordpress:4.7-apache
+    environment:
+      WORDPRESS_DB_PASSWORD: somepassword
+      VIRTUAL_HOST: ikoder.xyz
+      LETSENCRYPT_HOST: ikoder.xyz
+      LETSENCRYPT_EMAIL: admin@ikoder.xyz
+
+  mysql:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: somepassword
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/etc/nginx/vhost.d"
+      - "/usr/share/nginx/html"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "/etc/nginx/certs"
+
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    volumes_from:
+      - "nginx-proxy"
+```
+
+Здесь по пометке VIRTUAL_HOST companion определяет, что именно этот контейнер будет целью привязки; то, что он отдаёт, будет доступно по основному доменному адресу. У контейнера, обеспечивающего доступ к БД, никаких портов нет, доступ к нему будет осуществляться просто по имени контейнера.
+
+И теперь решим окончательную задачу - пристегнуть домен по безопасному протоколу к той конфигурации, которая уже есть в ЭТОЙ ветке репозитория. Результат см. в ветке mongorestencrypt
